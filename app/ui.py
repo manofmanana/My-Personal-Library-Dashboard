@@ -61,7 +61,7 @@ def inject_custom_css():
 
             /* ===== Sidebar Bookworm Image ===== */
             .sidebar-bookworm {{
-                margin-top: 350px; /* Lowered vertically */
+                margin-top: 300px; /* Lowered vertically */
                 display: flex;
                 justify-content: center;
                 padding: 10px;
@@ -202,7 +202,7 @@ def inject_custom_css():
                 object-fit: contain;
                 border-radius: 8px;
                 border: 14px solid transparent;
-                border-image: linear-gradient(135deg, #e6ddc5, {KPI_BROWN}, {KPI_BROWN_DARK}) 1;
+                border-image: linear-gradient(135deg, {KPI_BROWN}, {KPI_BROWN_DARK}) 1;
                 box-shadow:
                     0 0 12px rgba(75, 58, 38, 0.6),
                     0 6px 16px rgba(0, 0, 0, 0.7),
