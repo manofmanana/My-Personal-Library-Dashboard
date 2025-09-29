@@ -24,9 +24,10 @@ st.set_page_config(
 )
 
 # 🎨 Colors
-DARK_BROWN = "#3b2a20"   # darker wood brown
-MID_BROWN = "#2a1d14"    # sidebar wood base
-GOLD = "#d4af37"
+DARK_BROWN = "#3b2a20"    # sidebar dark brown
+MID_BROWN = "#2a1d14"     # deeper sidebar accent
+FOREST_GREEN = "#2e4e3f"  # main accent
+PARCHMENT = "#e6ddc5"     # parchment ivory background
 
 # =====================
 # CSS Styling
@@ -34,40 +35,90 @@ GOLD = "#d4af37"
 st.markdown(
     f"""
     <style>
-        body, .stApp {{ background-color: {DARK_BROWN}; color: #ffffff; }}
+        body, .stApp {{
+            background-color: {PARCHMENT};
+            color: #1c1c1c;
+        }}
         section[data-testid="stSidebar"] {{
             background-color: {MID_BROWN};
             background-image: url("https://www.transparenttextures.com/patterns/dark-wood.png");
             background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }}
-        h1, h2, h3, h4, h5, h6 {{ color: #ffffff !important; }}
+        h1, h2, h3, h4, h5, h6 {{
+            color: #2e4e3f !important;
+        }}
 
-        /* === Sidebar doors === */
-        .sidebar-door {{
-            display: block;
-            padding: 16px;
-            margin: 10px 0;
-            border-radius: 8px;
+        /* === Hallway title in sidebar === */
+        .css-1d391kg, .sidebar-title, .stSidebar h1 {{
+            color: white !important;
+            font-weight: bold !important;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+        }}
+
+        /* === Banner text force white === */
+        .banner-title {{
+            color: white !important;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }}
+        .banner-subtitle {{
+            color: white !important;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+        }}
+
+        /* === Sidebar Buttons (Forest Green) === */
+        .stButton > button, .stDownloadButton > button {{
+            background-color: {FOREST_GREEN} !important;
+            color: white !important;
+            border-radius: 6px;
+            padding: 0.5em 1em;
             font-weight: bold;
-            font-size: clamp(0.9em, 2vw, 1.1em);
-            text-align: center;
-            cursor: pointer;
-            background-color: #555;
-            color: white;
-            transition: all 0.3s ease-in-out;
+            border: none;
         }}
-        .sidebar-door:hover {{
-            background-color: #777;
-            color: {GOLD};
-            box-shadow: 0 0 14px {GOLD};
-        }}
-        .sidebar-door.active {{
-            background-color: black !important;
-            color: {GOLD} !important;
-            box-shadow: 0 0 16px {GOLD};
+        .stButton > button:hover, .stDownloadButton > button:hover {{
+            background-color: #3d6f56 !important;
+            color: white !important;
+            box-shadow: 0 0 10px {FOREST_GREEN};
         }}
 
-        /* === Book Covers with antique gold frames === */
+        /* === Inputs & Selectboxes (better visibility) === */
+        .stTextInput > div > div > input,
+        .stTextArea > div > textarea,
+        .stSelectbox > div > div,
+        .stNumberInput > div > input,
+        .stPasswordInput > div > input {{
+            background-color: #f7f3e9 !important;
+            color: #1c1c1c !important;
+            border: 1px solid {FOREST_GREEN} !important;
+            border-radius: 6px;
+            padding: 6px;
+        }}
+        .stTextInput > div > div > input:focus,
+        .stTextArea > div > textarea:focus,
+        .stSelectbox > div > div:focus,
+        .stNumberInput > div > input:focus,
+        .stPasswordInput > div > input:focus {{
+            outline: none !important;
+            border: 2px solid {FOREST_GREEN} !important;
+            box-shadow: 0 0 6px {FOREST_GREEN};
+        }}
+
+        /* === Sidebar Bookworm image (pushed lower) === */
+        .sidebar-bookworm {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 350px; /* pushes it way down */
+            padding: 40px 0;
+        }}
+        .sidebar-bookworm img {{
+            max-width: 120px;
+            height: auto;
+        }}
+
+        /* === Book Covers with forest green frames === */
         .book-cover {{
             margin-bottom: 14px;
             position: relative;
@@ -81,24 +132,24 @@ st.markdown(
             object-fit: contain;
             border-radius: 8px;
             border: 14px solid transparent;
-            border-image: linear-gradient(135deg, #fff8dc, {GOLD}, #b8860b, #ffd700, #daa520) 1;
+            border-image: linear-gradient(135deg, #e6ddc5, {FOREST_GREEN}, #1c3b2a) 1;
             box-shadow:
-                0 0 12px rgba(255, 235, 180, 0.8),
+                0 0 12px rgba(30, 60, 40, 0.6),
                 0 6px 16px rgba(0, 0, 0, 0.7),
-                inset 0 0 18px rgba(255, 250, 200, 0.6),
+                inset 0 0 18px rgba(40, 80, 55, 0.6),
                 inset 2px 2px 8px rgba(0,0,0,0.5);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }}
         .book-cover:hover img {{
             transform: translateY(-6px) scale(1.05);
             box-shadow:
-                0 0 24px rgba(255, 255, 210, 1),
-                0 12px 28px rgba(218, 165, 32, 0.85),
-                inset 0 0 26px rgba(255, 250, 200, 0.95);
+                0 0 24px rgba(46, 78, 63, 1),
+                0 12px 28px rgba(46, 78, 63, 0.85),
+                inset 0 0 26px rgba(46, 78, 63, 0.95);
             cursor: pointer;
         }}
 
-        /* Floating decorative gold corners */
+        /* Floating decorative corners */
         .book-cover::before,
         .book-cover::after,
         .book-cover .corner-top-right,
@@ -107,8 +158,8 @@ st.markdown(
             position: absolute;
             width: 28px;
             height: 28px;
-            border: 4px solid {GOLD};
-            filter: drop-shadow(0 0 6px rgba(255, 220, 150, 0.9));
+            border: 4px solid {FOREST_GREEN};
+            filter: drop-shadow(0 0 6px rgba(46, 78, 63, 0.9));
             pointer-events: none;
         }}
         .book-cover::before {{
@@ -154,9 +205,9 @@ st.markdown(
             opacity: 1;
         }}
 
-        /* === KPI Boxes Styling === */
-        .gold-metric {{
-            background: linear-gradient(135deg, #fff8dc, {GOLD}, #b8860b, #ffd700, #daa520);
+        /* === KPI Boxes Styling (forest green, white text) === */
+        .green-metric {{
+            background: linear-gradient(135deg, #2e4e3f, #1c3b2a);
             border-radius: 14px;
             padding: 18px;
             margin: 6px;
@@ -167,19 +218,20 @@ st.markdown(
             display: flex;
             flex-direction: column;
             justify-content: center;
+            color: white !important;
         }}
-        .gold-metric:hover {{
-            box-shadow: 0 0 24px rgba(255, 255, 210, 1),
-                        0 12px 28px rgba(218, 165, 32, 0.85),
-                        inset 0 0 26px rgba(255, 250, 200, 0.95);
+        .green-metric:hover {{
+            box-shadow: 0 0 24px rgba(46, 78, 63, 1),
+                        0 12px 28px rgba(46, 78, 63, 0.85),
+                        inset 0 0 26px rgba(46, 78, 63, 0.95);
             transform: translateY(-4px) scale(1.02);
         }}
-        .gold-metric h3 {{
+        .green-metric h3 {{
             color: white !important;
             margin: 4px 0;
             font-size: 1.1em;
         }}
-        .gold-metric p {{
+        .green-metric p {{
             color: white !important;
             margin: 4px 0;
             font-size: 1.8em;
@@ -196,36 +248,42 @@ st.markdown(
 df = db_utils.get_books()
 
 # =====================
-# Sidebar Navigation (Doors)
+# Sidebar Navigation
 # =====================
 st.sidebar.title("Hallway")
 
 PAGES = ["Library", "Computer Lab Dashboard", "Bookstacks", "Stack Maintenance"]
 
-# Restore selection from query params
-if "page" in st.query_params:
-    st.session_state["page"] = st.query_params["page"]
-
 selected_page = None
-for p in PAGES:
-    active = st.session_state.get("page", "Library") == p
-    button_label = f"**{p}**" if active else p
-    if st.sidebar.button(button_label, key=p, use_container_width=True):
-        st.session_state["page"] = p
-        st.query_params["page"] = p
-        selected_page = p
+for page in PAGES:
+    if st.sidebar.button(page, key=page, help=f"Enter {page}", use_container_width=True):
+        st.session_state["page"] = page
+        selected_page = page
 
-# Default selection
 if "page" not in st.session_state:
     st.session_state["page"] = "Library"
 
 page = selected_page or st.session_state["page"]
 
+# Bookworm image
+bookworm_path = "bookworm.png"
+if os.path.exists(bookworm_path):
+    with open(bookworm_path, "rb") as f:
+        worm_bytes = f.read()
+    worm_base64 = base64.b64encode(worm_bytes).decode()
+    st.sidebar.markdown(
+        f"""
+        <div class="sidebar-bookworm">
+            <img src="data:image/png;base64,{worm_base64}" alt="Bookworm"/>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 # =====================
 # Page: Library
 # =====================
 if page == "Library":
-    # Banner
     banner_path = "banner.JPG"
     if os.path.exists(banner_path):
         with open(banner_path, "rb") as f:
@@ -237,11 +295,11 @@ if page == "Library":
                 <img src="data:image/jpg;base64,{banner_base64}"
                     style="width:100%; height:auto; border-radius: 0 0 12px 12px; filter: brightness(60%);">
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                            color: white; text-align: center; padding: 0 20px;">
-                    <h1 style="font-size: clamp(1.5em, 4vw, 3em); margin-bottom: 0.3em;">
+                            text-align: center; padding: 0 20px;">
+                    <h1 class="banner-title" style="font-size: clamp(1.5em, 4vw, 3em); margin-bottom: 0.3em;">
                         Alejandro's Library
                     </h1>
-                    <p style="font-size: clamp(0.9em, 2vw, 1.2em); margin: 0;">
+                    <p class="banner-subtitle" style="font-size: clamp(0.9em, 2vw, 1.2em); margin: 0;">
                         A dashboard tracking my reading journey across years, genres, and ideas.
                     </p>
                 </div>
@@ -250,7 +308,6 @@ if page == "Library":
             unsafe_allow_html=True
         )
 
-    # Quotes
     quotes = [
         ("The darker the night, the brighter the stars.", "Fyodor Dostoevsky"),
         ("Blessed are the hearts that can bend; they shall never be broken.", "Albert Camus"),
@@ -265,12 +322,26 @@ if page == "Library":
     ]
     quote, author = random.choice(quotes)
     st.markdown(
-        f"<div style='background:{GOLD}; color:white; padding:15px; border-radius:12px; margin:20px 0; text-align:center; font-size:1.1em; font-weight:bold;'>{quote} — {author}</div>",
+        f"<div style='background:{FOREST_GREEN}; color:white; padding:15px; border-radius:12px; margin:20px 0; text-align:center; font-size:1.1em; font-weight:bold;'>{quote} — {author}</div>",
         unsafe_allow_html=True
     )
 
-    # KPIs
-    ui.show_kpis(df)
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.markdown(f"<div class='green-metric'><h3>Total Books</h3><p>{len(df)}</p></div>", unsafe_allow_html=True)
+    with col2:
+        avg_rating = round(df['rating'].mean(), 2) if not df.empty else "N/A"
+        st.markdown(f"<div class='green-metric'><h3>Avg. Rating</h3><p>{avg_rating}</p></div>", unsafe_allow_html=True)
+    with col3:
+        most_popular_genre = df['genre'].mode()[0] if not df.empty and not df['genre'].dropna().empty else "N/A"
+        st.markdown(f"<div class='green-metric'><h3>Most Popular Genre</h3><p>{most_popular_genre}</p></div>", unsafe_allow_html=True)
+    with col4:
+        if not df.empty:
+            min_year, max_year = int(df['year'].min()), int(df['year'].max())
+            years_range = f"{min_year}–{max_year}"
+        else:
+            years_range = "N/A"
+        st.markdown(f"<div class='green-metric'><h3>Years Covered</h3><p>{years_range}</p></div>", unsafe_allow_html=True)
 
 # =====================
 # Page: Computer Lab Dashboard
@@ -319,7 +390,7 @@ elif page == "Bookstacks":
 # =====================
 elif page == "Stack Maintenance":
     st.subheader("Manage Stacks")
-    password = st.text_input("Enter password to manage bookstack:", type="password")
+    password = st.text_input("Enter password to manage book stacks:", type="password")
 
     if password == ADMIN_PASSWORD:
         tab_add, tab_edit, tab_delete = st.tabs(["Add Book", "Edit Book", "Delete Book"])
