@@ -5,8 +5,9 @@ import pandas as pd
 # 🎨 Apple-inspired playful colors
 APPLE_PALETTE = ["#1f77b4", "#d62728", "#ffbf00", "#2ca02c"]  # blue, red, yellow, green
 
+
 def _wrap_chart(fig, title: str):
-    """Wrap chart in a full iMac-style frame (bezel, chin, neck, foot) that scales as one unit on mobile."""
+    """Wrap chart in a full iMac-style frame (bezel, chin, neck, foot) that expands on mobile for readability."""
     fig_html = fig.to_html(include_plotlyjs="cdn", full_html=False, config={"responsive": True})
 
     html = f"""
@@ -24,19 +25,28 @@ def _wrap_chart(fig, title: str):
             align-items: center; 
             width: 90%;
             max-width: 1100px;
-            transform-origin: top center;
         }}
 
-        /* 📱 Scale the whole frame down on mobile */
+        /* 📱 On mobile, let frame expand wider & taller */
         @media (max-width: 768px) {{
             .imac-frame {{
-                transform: scale(0.85);
+                width: 100%;
+                max-width: 100%;
+            }}
+            .imac-frame .chart-container {{
+                height: 480px !important;
+                overflow-x: auto; /* allow scroll for wide charts */
             }}
         }}
 
         @media (max-width: 480px) {{
             .imac-frame {{
-                transform: scale(0.72);
+                width: 100%;
+                max-width: 100%;
+            }}
+            .imac-frame .chart-container {{
+                height: 520px !important;
+                overflow-x: auto;
             }}
         }}
     </style>
@@ -50,7 +60,8 @@ def _wrap_chart(fig, title: str):
                     border-radius: 14px 14px 0 0;"></div>
 
         <!-- Chart container -->
-        <div style="background: black; width: 100%;
+        <div class="chart-container" style="background: black; width: 100%;
+                    min-height: 400px;
                     border-left: 6px solid transparent; 
                     border-right: 6px solid transparent;
                     border-image: linear-gradient(to bottom, #fdfdfd, #a6a6a6) 1;
@@ -65,7 +76,7 @@ def _wrap_chart(fig, title: str):
         <div style="background: linear-gradient(to top, #ededed, #b3b3b3); 
                     height: 70px; width: 100%;
                     border-radius: 0 0 18px 18px; position: relative;">
-            <div style="width: 40px; height: 40px; 
+            <div style="width: 25px; height: 25px; 
                         background: radial-gradient(circle at 30% 30%, #555, black); 
                         border-radius: 50%;
                         position: absolute; top: 50%; left: 50%; 
@@ -98,24 +109,24 @@ def _wrap_chart(fig, title: str):
 
 
 def _apply_layout(fig, title: str):
-    """Apply consistent dark background and axis styling (desktop good, mobile shrinks via frame scaling)."""
+    """Apply consistent dark background and axis styling (desktop good, mobile given breathing room)."""
     fig.update_layout(
         title=title,
         paper_bgcolor="black",
         plot_bgcolor="black",
         font=dict(color="white", size=15),
         legend=dict(font=dict(color="white", size=12)),
-        margin=dict(l=180, r=100, t=80, b=120),
+        margin=dict(l=100, r=60, t=60, b=80),
     )
     fig.update_xaxes(
         color="white", gridcolor="#444", 
-        title_font=dict(size=14), tickfont=dict(size=12),
-        title_standoff=50
+        title_font=dict(size=13), tickfont=dict(size=11),
+        automargin=True
     )
     fig.update_yaxes(
         color="white", gridcolor="#444",
-        title_font=dict(size=14), tickfont=dict(size=12),
-        title_standoff=70
+        title_font=dict(size=13), tickfont=dict(size=11),
+        automargin=True
     )
 
 
@@ -132,19 +143,26 @@ def show_charts(df: pd.DataFrame):
 
     st.subheader("Computer Lab Dashboard")
 
-    frame_height = 780  # keep desktop good, mobile handled via CSS scaling
+    frame_height = 820  # taller frame for breathing room
 
     # Books per Year
     by_year = dfx.dropna(subset=["year"]).groupby("year").size().reset_index(name="Books")
     by_year = by_year[by_year["year"] == by_year["year"].astype(int)]
+
     if not by_year.empty:
+        # Limit number of bars on mobile to avoid squished x-axis
+        if st.session_state.get("is_mobile", False):
+            by_year = by_year.tail(10)  # only last 10 years for mobile
         fig1 = px.bar(by_year, x="year", y="Books", color="Books", color_continuous_scale=APPLE_PALETTE)
         _apply_layout(fig1, "Books per Year")
         st.components.v1.html(_wrap_chart(fig1, "Books per Year"), height=frame_height, scrolling=False)
 
     # Books per Genre
     by_genre = dfx.groupby("genre").size().reset_index(name="Books").sort_values("Books", ascending=True)
+
     if not by_genre.empty:
+        if st.session_state.get("is_mobile", False):
+            by_genre = by_genre.tail(10)  # only top 10 genres for mobile
         fig2 = px.bar(by_genre, x="Books", y="genre", orientation="h", color="Books",
                       color_continuous_scale=APPLE_PALETTE)
         _apply_layout(fig2, "Books per Genre")
@@ -153,13 +171,16 @@ def show_charts(df: pd.DataFrame):
     # Average Rating by Genre
     rated = dfx.dropna(subset=["rating"])
     by_genre_rating = rated.groupby("genre")["rating"].mean().reset_index().sort_values("rating", ascending=False)
+
     if not by_genre_rating.empty:
+        if st.session_state.get("is_mobile", False):
+            by_genre_rating = by_genre_rating.head(8)  # fewer bars on mobile
         fig3 = px.bar(by_genre_rating, x="genre", y="rating", color="rating",
                       color_continuous_scale=APPLE_PALETTE, text="rating")
         fig3.update_traces(
             texttemplate="%{text:.2f}",
             textposition="outside",
-            textfont=dict(size=14),
+            textfont=dict(size=12),
             cliponaxis=False
         )
         fig3.update_yaxes(range=[0, 5.5])
@@ -168,6 +189,7 @@ def show_charts(df: pd.DataFrame):
 
     # Top 5 Authors
     by_author = dfx.groupby("author").size().reset_index(name="Books").sort_values("Books", ascending=False).head(5)
+
     if not by_author.empty:
         fig4 = px.bar(by_author, x="author", y="Books", color="Books",
                       color_continuous_scale=APPLE_PALETTE, text="Books")
@@ -185,7 +207,10 @@ def show_charts(df: pd.DataFrame):
     # Average Rating by Year
     by_year_rating = rated.dropna(subset=["year"]).groupby("year")["rating"].mean().reset_index().sort_values("year")
     by_year_rating = by_year_rating[by_year_rating["year"] == by_year_rating["year"].astype(int)]
+
     if not by_year_rating.empty:
+        if st.session_state.get("is_mobile", False):
+            by_year_rating = by_year_rating.tail(10)  # only last 10 years on mobile
         fig6 = px.line(by_year_rating, x="year", y="rating", markers=True)
         fig6.update_traces(line=dict(color="#1f77b4"), marker=dict(color="#d62728", size=10))
         fig6.update_yaxes(range=[0, 5])
