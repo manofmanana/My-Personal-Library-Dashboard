@@ -39,15 +39,13 @@ st.markdown(
         h1, h2, h3, h4, h5, h6 {{ color: #ffffff !important; }}
 
         /* === Banner Responsive === */
-        h1.banner-title {{
-            font-size: 6vw;  /* scales with screen width */
+        .banner-title {{
+            font-size: clamp(24px, 6vw, 48px); /* dynamically scales between 24px and 48px */
+            margin-bottom: 0.3em;
         }}
-        p.banner-subtitle {{
-            font-size: 3.5vw;
-        }}
-        @media (max-width: 600px) {{
-            h1.banner-title {{ font-size: 8vw; }}
-            p.banner-subtitle {{ font-size: 4vw; }}
+        .banner-subtitle {{
+            font-size: clamp(14px, 3.5vw, 22px); /* dynamically scales between 14px and 22px */
+            margin: 0;
         }}
 
         /* === Book Covers with floating antique gold corners === */
@@ -187,7 +185,7 @@ st.markdown(
 # =====================
 # Banner
 # =====================
-banner_path = "banner.JPG"  # relative so it works on Streamlit Cloud
+banner_path = "banner.JPG"
 if os.path.exists(banner_path):
     with open(banner_path, "rb") as f:
         banner_bytes = f.read()
