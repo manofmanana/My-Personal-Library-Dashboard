@@ -23,13 +23,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 🎨 Updated lighter theme + gold
-DARK_BROWN = "#5c4033"   # warm brown background
+# 🎨 Colors
+DARK_BROWN = "#5c4033"
 MID_BROWN = "#7b5747"
 GOLD = "#d4af37"
 
 # =====================
-# CSS Styling
+# Responsive CSS Styling
 # =====================
 st.markdown(
     f"""
@@ -37,6 +37,18 @@ st.markdown(
         body, .stApp {{ background-color: {DARK_BROWN}; color: #ffffff; }}
         section[data-testid="stSidebar"] {{ background-color: {MID_BROWN}; }}
         h1, h2, h3, h4, h5, h6 {{ color: #ffffff !important; }}
+
+        /* === Banner Responsive === */
+        h1.banner-title {{
+            font-size: 6vw;  /* scales with screen width */
+        }}
+        p.banner-subtitle {{
+            font-size: 3.5vw;
+        }}
+        @media (max-width: 600px) {{
+            h1.banner-title {{ font-size: 8vw; }}
+            p.banner-subtitle {{ font-size: 4vw; }}
+        }}
 
         /* === Book Covers with floating antique gold corners === */
         .book-cover {{
@@ -125,7 +137,7 @@ st.markdown(
             opacity: 1;
         }}
 
-        /* === KPI Boxes Styling (Gold, equal size, bigger font) === */
+        /* === KPI Boxes Styling === */
         .gold-metric {{
             background: linear-gradient(135deg, #fff8dc, {GOLD}, #b8860b, #ffd700, #daa520);
             border-radius: 14px;
@@ -156,15 +168,26 @@ st.markdown(
             font-size: 1.8em;
             font-weight: bold;
         }}
+
+        /* Responsive KPI stacking */
+        @media (max-width: 768px) {{
+            .block-container .stColumns {{
+                display: block !important;
+            }}
+            .gold-metric {{
+                width: 100% !important;
+                margin-bottom: 12px;
+            }}
+        }}
     </style>
     """,
     unsafe_allow_html=True
 )
 
 # =====================
-# Banner (relative path fix)
+# Banner
 # =====================
-banner_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "banner.JPG"))
+banner_path = "banner.JPG"  # relative so it works on Streamlit Cloud
 if os.path.exists(banner_path):
     with open(banner_path, "rb") as f:
         banner_bytes = f.read()
@@ -176,8 +199,8 @@ if os.path.exists(banner_path):
                  style="width:100%; height:auto; border-radius: 0 0 12px 12px; filter: brightness(60%);">
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
                         color: white; text-align: center; padding: 0 20px;">
-                <h1 style="font-size: 3em; margin-bottom: 0.3em;">Alejandro's Library</h1>
-                <p style="font-size: 1.2em; margin: 0;">A dashboard tracking my reading journey across years, genres, and ideas.</p>
+                <h1 class="banner-title">Alejandro's Library</h1>
+                <p class="banner-subtitle">A dashboard tracking my reading journey across years, genres, and ideas.</p>
             </div>
         </div>
         """,
