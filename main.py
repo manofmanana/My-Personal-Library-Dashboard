@@ -4,7 +4,9 @@ import os
 import random
 import pandas as pd
 from dotenv import load_dotenv
-from app import db_utils, ui, analytics
+import app.db_utils as db_utils
+import app.ui as ui
+import app.analytics as analytics
 
 # =====================
 # Load environment variables
