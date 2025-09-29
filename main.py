@@ -162,9 +162,9 @@ st.markdown(
 )
 
 # =====================
-# Banner
+# Banner (relative path fix)
 # =====================
-banner_path = "/Users/alejandroines/my_dashboard_v2/banner.JPG"
+banner_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "banner.JPG"))
 if os.path.exists(banner_path):
     with open(banner_path, "rb") as f:
         banner_bytes = f.read()
