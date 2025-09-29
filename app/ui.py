@@ -27,6 +27,23 @@ def inject_custom_css():
                 color: white;
             }}
 
+            /* ===== Dashboard Title ===== */
+            .main-title {{
+                text-align: center;
+                font-size: 2.2em;
+                font-weight: bold;
+                margin-top: 10px;
+                margin-bottom: 6px;
+                color: {KPI_BROWN_DARK};
+            }}
+            .main-subtitle {{
+                text-align: center;
+                font-size: 1.1em;
+                font-style: italic;
+                margin-bottom: 30px;
+                color: {KPI_BROWN};
+            }}
+
             /* ===== Sidebar ===== */
             section[data-testid="stSidebar"] {{
                 background-color: #2a1d14;
@@ -96,23 +113,28 @@ def inject_custom_css():
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
+                align-items: center;
                 color: white !important;
+            }}
+            .green-metric h3 {{
+                margin-bottom: 8px;
+                font-size: 1.3em !important;
+                font-weight: bold !important;
+                color: white !important;
+                text-align: center;
+            }}
+            .green-metric p {{
+                margin: 0;
+                font-size: 1.6em !important;
+                font-weight: bold !important;
+                color: white !important;
+                text-align: center;
             }}
             .green-metric:hover {{
                 box-shadow: 0 0 24px {KPI_BROWN},
                             0 12px 28px rgba(75, 58, 38, 0.85),
                             inset 0 0 26px rgba(75, 58, 38, 0.95);
                 transform: translateY(-4px) scale(1.02);
-            }}
-            .green-metric h3 {{
-                color: white !important;
-                font-size: 1.5em !important;
-                font-weight: bold !important;
-            }}
-            .green-metric p {{
-                color: white !important;
-                font-size: 1.5em !important;
-                font-weight: bold !important;
             }}
 
             /* ===== Inputs & Dropdowns ===== */
@@ -220,15 +242,21 @@ def inject_custom_css():
 
             /* ===== Mobile Optimization ===== */
             @media (max-width: 768px) {{
+                .main-title {{
+                    font-size: 1.6em;
+                }}
+                .main-subtitle {{
+                    font-size: 1em;
+                }}
                 .green-metric {{
                     height: auto;
                     padding: 12px;
                 }}
                 .green-metric h3 {{
-                    font-size: 1.2em !important;
+                    font-size: 1.1em !important;
                 }}
                 .green-metric p {{
-                    font-size: 1.1em !important;
+                    font-size: 1.3em !important;
                 }}
                 .book-cover img {{
                     max-height: 250px;
@@ -244,7 +272,7 @@ def inject_custom_css():
     )
 
 # =====================
-# Sidebar Doors Navigation
+# Sidebar Doors Navigation (auto-close)
 # =====================
 def show_sidebar_doors(pages):
     st.sidebar.title("Hallway")
@@ -256,6 +284,21 @@ def show_sidebar_doors(pages):
         is_active = st.session_state["page"] == page
         if st.sidebar.button(page, use_container_width=True, key=page):
             st.session_state["page"] = page
+            # Auto-close sidebar after click
+            st.markdown(
+                """
+                <script>
+                let sidebar = window.parent.document.querySelector('section[data-testid="stSidebar"]');
+                if (sidebar) {{
+                    sidebar.style.display = "none";
+                    setTimeout(() => {{
+                        sidebar.style.display = "block";
+                    }}, 400);
+                }}
+                </script>
+                """,
+                unsafe_allow_html=True,
+            )
 
         if is_active:
             st.markdown(
@@ -338,3 +381,10 @@ def show_book_grid(df: pd.DataFrame):
                 )
     else:
         st.info("No books yet — add your first one below!")
+
+# =====================
+# Dashboard Title
+# =====================
+def show_dashboard_title():
+    st.markdown("<div class='main-title'>Alejandro’s Library</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-subtitle'>A dashboard tracking books, ratings, and genres dynamically</div>", unsafe_allow_html=True)
