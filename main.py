@@ -114,7 +114,7 @@ if page == "Library":
     ]
     quote, author = random.choice(quotes)
     st.markdown(
-        f"<div style='background:{FOREST_GREEN}; color:white; padding:15px; border-radius:12px; margin:20px 0; text-align:center; font-size:1.1em; font-weight:bold;'>{quote} — {author}</div>",
+        f"<div style='background:{ui.KPI_BROWN}; color:white; padding:15px; border-radius:12px; margin:20px 0; text-align:center; font-size:1.1em; font-weight:bold;'>{quote} — {author}</div>",
         unsafe_allow_html=True
     )
 
