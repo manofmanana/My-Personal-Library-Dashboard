@@ -1,0 +1,23 @@
+# Environment secrets
+.env
+*.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.venv/
+
+# SQLite database
+*.db
+
+# Streamlit logs and cache
+.streamlit/
+.streamlit/secrets.toml
+
+# macOS junk
+.DS_Store
