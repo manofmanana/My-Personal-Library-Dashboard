@@ -319,7 +319,7 @@ elif page == "Bookstacks":
 # =====================
 elif page == "Stack Maintenance":
     st.subheader("Manage Stacks")
-    password = st.text_input("Enter password to manage book stacks:", type="password")
+    password = st.text_input("Enter password to manage bookstack:", type="password")
 
     if password == ADMIN_PASSWORD:
         tab_add, tab_edit, tab_delete = st.tabs(["Add Book", "Edit Book", "Delete Book"])
