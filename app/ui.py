@@ -5,7 +5,7 @@ from app import db_utils
 # 🎨 Theme colors
 FOREST_GREEN = "#2e4e3f"
 FOREST_GREEN_DARK = "#1c3b2a"
-PARCHMENT = "#dcd3b2"
+PARCHMENT = "#e6ddc5"
 
 # =====================
 # Shared CSS Styling
@@ -16,7 +16,7 @@ def inject_custom_css():
         <style>
             /* ===== Top Header ===== */
             header[data-testid="stHeader"] {{
-                background-color: #555 !important;
+                background-color: #4b3a26 !important;
                 background-image: url("https://www.transparenttextures.com/patterns/stone-wall.png");
                 background-size: cover;
                 color: white;
@@ -28,28 +28,33 @@ def inject_custom_css():
                 background-image: url("https://www.transparenttextures.com/patterns/dark-wood.png");
                 background-size: cover;
             }}
-
-            /* Sidebar title */
             .stSidebar h1 {{
                 color: white !important;
                 font-weight: bold !important;
                 text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
             }}
 
-            /* Sidebar buttons */
+            /* ===== Sidebar Navigation Buttons ===== */
             .stSidebar .stButton > button {{
                 background-color: {FOREST_GREEN} !important;
                 color: white !important;
-                border-radius: 6px;
-                padding: 0.6em 1em;
+                border-radius: 8px;
+                padding: 12px 16px;
                 font-weight: bold;
-                border: none;
+                font-size: 1em;
+                margin-bottom: 10px;
                 width: 100%;
+                border: none;
+                transition: all 0.2s ease-in-out;
             }}
             .stSidebar .stButton > button:hover {{
                 background-color: #3d6f56 !important;
-                color: white !important;
                 box-shadow: 0 0 10px {FOREST_GREEN};
+            }}
+            .stSidebar .stButton > button[data-active="true"] {{
+                background-color: {FOREST_GREEN_DARK} !important;
+                color: white !important;
+                border: 2px solid white !important;
             }}
 
             /* ===== KPI Boxes ===== */
@@ -77,23 +82,7 @@ def inject_custom_css():
                 color: white !important;
             }}
 
-            /* ===== Buttons ===== */
-            button, .stDownloadButton button, .stButton button {{
-                background-color: {FOREST_GREEN} !important;
-                color: white !important;
-                border: none !important;
-                border-radius: 6px !important;
-                padding: 8px 16px !important;
-                font-weight: bold !important;
-                transition: all 0.2s ease-in-out !important;
-            }}
-            button:hover, .stDownloadButton button:hover, .stButton button:hover {{
-                background-color: {FOREST_GREEN_DARK} !important;
-                color: white !important;
-                box-shadow: 0 0 10px {FOREST_GREEN};
-            }}
-
-            /* ===== Inputs & Selectboxes ===== */
+            /* ===== Global Inputs ===== */
             .stTextInput > div > div > input,
             .stTextArea > div > textarea,
             .stSelectbox > div > div,
@@ -115,12 +104,27 @@ def inject_custom_css():
                 box-shadow: 0 0 6px {FOREST_GREEN};
             }}
 
-            /* ===== Expanders ===== */
+            /* ===== Fix Dropdown Cutoff ===== */
+            .stSelectbox [role="combobox"] {{
+                overflow: visible !important;
+            }}
+            .stSelectbox div[data-baseweb="popover"] {{
+                z-index: 9999 !important;
+            }}
+
+            /* ===== Expanders (Filter & Others) ===== */
             div.streamlit-expanderHeader {{
                 background-color: {FOREST_GREEN} !important;
                 color: white !important;
                 font-weight: bold !important;
                 border-radius: 6px !important;
+            }}
+            div.streamlit-expanderHeader:hover {{
+                background-color: #3d6f56 !important;
+            }}
+            div.streamlit-expanderHeader[aria-expanded="true"] {{
+                background-color: {FOREST_GREEN_DARK} !important;
+                color: white !important;
             }}
             .streamlit-expanderContent {{
                 background-color: {PARCHMENT} !important;
@@ -129,7 +133,20 @@ def inject_custom_css():
                 color: black !important;
             }}
 
-            /* ===== Book Covers ===== */
+            /* ===== Scoped Form Buttons (Stack Maintenance) ===== */
+            .stTabs .stButton > button {{
+                background-color: {FOREST_GREEN} !important;
+                color: white !important;
+                border-radius: 6px;
+                font-weight: bold;
+                padding: 8px 16px;
+                border: none;
+            }}
+            .stTabs .stButton > button:hover {{
+                background-color: #3d6f56 !important;
+            }}
+
+            /* ===== Book Covers with Decorative Corners ===== */
             .book-cover {{
                 margin-bottom: 14px;
                 position: relative;
@@ -142,10 +159,13 @@ def inject_custom_css():
                 max-height: 400px;
                 object-fit: contain;
                 border-radius: 8px;
-                border: 12px solid {FOREST_GREEN};
+                border: 14px solid transparent;
+                border-image: linear-gradient(135deg, #e6ddc5, {FOREST_GREEN}, {FOREST_GREEN_DARK}) 1;
                 box-shadow:
-                    0 0 12px rgba(46, 78, 63, 0.8),
-                    0 6px 16px rgba(0, 0, 0, 0.7);
+                    0 0 12px rgba(30, 60, 40, 0.6),
+                    0 6px 16px rgba(0, 0, 0, 0.7),
+                    inset 0 0 18px rgba(40, 80, 55, 0.6),
+                    inset 2px 2px 8px rgba(0,0,0,0.5);
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
             }}
             .book-cover:hover img {{
@@ -156,13 +176,45 @@ def inject_custom_css():
                     inset 0 0 26px rgba(46, 78, 63, 0.95);
                 cursor: pointer;
             }}
+            .book-cover::before,
+            .book-cover::after,
+            .book-cover .corner-top-right,
+            .book-cover .corner-bottom-left {{
+                content: "";
+                position: absolute;
+                width: 28px;
+                height: 28px;
+                border: 4px solid {FOREST_GREEN};
+                filter: drop-shadow(0 0 6px rgba(46, 78, 63, 0.9));
+                pointer-events: none;
+            }}
+            .book-cover::before {{
+                top: -10px; left: -10px;
+                border-right: none; border-bottom: none;
+                border-radius: 12px 0 0 0;
+            }}
+            .book-cover::after {{
+                bottom: -10px; right: -10px;
+                border-left: none; border-top: none;
+                border-radius: 0 0 12px 0;
+            }}
+            .book-cover .corner-top-right {{
+                top: -10px; right: -10px;
+                border-left: none; border-bottom: none;
+                border-radius: 0 12px 0 0;
+            }}
+            .book-cover .corner-bottom-left {{
+                bottom: -10px; left: -10px;
+                border-right: none; border-top: none;
+                border-radius: 0 0 0 12px;
+            }}
 
-            /* ===== Overlay on book covers ===== */
+            /* ===== Book Overlay ===== */
             .book-overlay {{
                 position: absolute;
                 top: 0; left: 0;
                 width: 100%; height: 100%;
-                background: rgba(0,0,0,0.6);
+                background: rgba(0,0,0,0.7);
                 color: white;
                 font-family: 'Georgia', serif;
                 font-size: 0.9em;
@@ -193,8 +245,26 @@ def show_sidebar_doors(pages):
         st.session_state["page"] = pages[0]
 
     for page in pages:
-        if st.sidebar.button(page, use_container_width=True):
+        is_active = st.session_state["page"] == page
+        if st.sidebar.button(page, use_container_width=True, key=page):
             st.session_state["page"] = page
+
+        if is_active:
+            st.markdown(
+                f"""
+                <script>
+                var btns = window.parent.document.querySelectorAll('.stSidebar .stButton button');
+                btns.forEach(b => {{
+                    if(b.innerText.trim() === "{page}") {{
+                        b.setAttribute("data-active","true");
+                    }} else {{
+                        b.removeAttribute("data-active");
+                    }}
+                }});
+                </script>
+                """,
+                unsafe_allow_html=True,
+            )
 
     return st.session_state["page"]
 
