@@ -12,8 +12,8 @@ __pycache__/
 venv/
 .venv/
 
-# SQLite database
-*.db
+# Explicitly keep your SQLite database
+!books_normalized.db
 
 # Streamlit logs and cache
 .streamlit/

@@ -28,7 +28,7 @@ def show_charts(df: pd.DataFrame):
     dfx["genre"] = dfx["genre"].fillna("Unknown")
     dfx["author"] = dfx["author"].fillna("Unknown")
 
-    st.subheader("Visual Insights")
+    st.subheader("Computer Lab Dashboard")
 
     # Books per Year
     by_year = dfx.dropna(subset=["year"]).groupby("year").size().reset_index(name="Books")
