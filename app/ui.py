@@ -3,8 +3,8 @@ import pandas as pd
 from app import db_utils
 
 # 🎨 Theme colors
-FOREST_GREEN = "#2e4e3f"
-FOREST_GREEN_DARK = "#1c3b2a"
+KPI_BROWN = "#4b3a26"
+KPI_BROWN_DARK = "#2f2419"
 PARCHMENT = "#e6ddc5"
 
 # =====================
@@ -14,6 +14,11 @@ def inject_custom_css():
     st.markdown(
         f"""
         <style>
+            /* ===== Page Background with Gradient ===== */
+            .stApp {{
+                background: linear-gradient(135deg, #efdfbb, #c8b68f);
+            }}
+
             /* ===== Top Header ===== */
             header[data-testid="stHeader"] {{
                 background-color: #4b3a26 !important;
@@ -27,6 +32,9 @@ def inject_custom_css():
                 background-color: #2a1d14;
                 background-image: url("https://www.transparenttextures.com/patterns/dark-wood.png");
                 background-size: cover;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
             }}
             .stSidebar h1 {{
                 color: white !important;
@@ -34,9 +42,27 @@ def inject_custom_css():
                 text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
             }}
 
+            /* ===== Sidebar Bookworm Image ===== */
+            .sidebar-bookworm {{
+                margin-top: 350px; /* Lowered vertically */
+                display: flex;
+                justify-content: center;
+                padding: 10px;
+            }}
+            .sidebar-bookworm img {{
+                width: 120px;
+                height: auto;
+                opacity: 0.95;
+                transition: transform 0.3s ease, opacity 0.3s ease;
+            }}
+            .sidebar-bookworm img:hover {{
+                transform: scale(1.05);
+                opacity: 1;
+            }}
+
             /* ===== Sidebar Navigation Buttons ===== */
             .stSidebar .stButton > button {{
-                background-color: {FOREST_GREEN} !important;
+                background-color: {KPI_BROWN} !important;
                 color: white !important;
                 border-radius: 8px;
                 padding: 12px 16px;
@@ -48,18 +74,18 @@ def inject_custom_css():
                 transition: all 0.2s ease-in-out;
             }}
             .stSidebar .stButton > button:hover {{
-                background-color: #3d6f56 !important;
-                box-shadow: 0 0 10px {FOREST_GREEN};
+                background-color: #5e4633 !important;
+                box-shadow: 0 0 10px {KPI_BROWN};
             }}
             .stSidebar .stButton > button[data-active="true"] {{
-                background-color: {FOREST_GREEN_DARK} !important;
+                background-color: {KPI_BROWN_DARK} !important;
                 color: white !important;
                 border: 2px solid white !important;
             }}
 
             /* ===== KPI Boxes ===== */
             .green-metric {{
-                background: linear-gradient(135deg, {FOREST_GREEN}, {FOREST_GREEN_DARK});
+                background: linear-gradient(135deg, {KPI_BROWN}, {KPI_BROWN_DARK});
                 border-radius: 14px;
                 padding: 18px;
                 margin: 6px;
@@ -73,16 +99,23 @@ def inject_custom_css():
                 color: white !important;
             }}
             .green-metric:hover {{
-                box-shadow: 0 0 24px {FOREST_GREEN},
-                            0 12px 28px rgba(46, 78, 63, 0.85),
-                            inset 0 0 26px rgba(46, 78, 63, 0.95);
+                box-shadow: 0 0 24px {KPI_BROWN},
+                            0 12px 28px rgba(75, 58, 38, 0.85),
+                            inset 0 0 26px rgba(75, 58, 38, 0.95);
                 transform: translateY(-4px) scale(1.02);
             }}
-            .green-metric h3, .green-metric p {{
+            .green-metric h3 {{
                 color: white !important;
+                font-size: 1.5em !important;
+                font-weight: bold !important;
+            }}
+            .green-metric p {{
+                color: white !important;
+                font-size: 1.5em !important;
+                font-weight: bold !important;
             }}
 
-            /* ===== Global Inputs ===== */
+            /* ===== Inputs & Dropdowns ===== */
             .stTextInput > div > div > input,
             .stTextArea > div > textarea,
             .stSelectbox > div > div,
@@ -90,9 +123,10 @@ def inject_custom_css():
             .stPasswordInput > div > input {{
                 background-color: white !important;
                 color: black !important;
-                border: 1px solid {FOREST_GREEN} !important;
+                border: 1px solid {KPI_BROWN} !important;
                 border-radius: 6px;
                 padding: 6px;
+                font-size: 0.9em;
             }}
             .stTextInput > div > div > input:focus,
             .stTextArea > div > textarea:focus,
@@ -100,53 +134,39 @@ def inject_custom_css():
             .stNumberInput > div > input:focus,
             .stPasswordInput > div > input:focus {{
                 outline: none !important;
-                border: 2px solid {FOREST_GREEN} !important;
-                box-shadow: 0 0 6px {FOREST_GREEN};
+                border: 2px solid {KPI_BROWN} !important;
+                box-shadow: 0 0 6px {KPI_BROWN};
             }}
-
-            /* ===== Fix Dropdown Cutoff ===== */
             .stSelectbox [role="combobox"] {{
                 overflow: visible !important;
+                font-size: 0.85em !important;
             }}
             .stSelectbox div[data-baseweb="popover"] {{
                 z-index: 9999 !important;
             }}
 
-            /* ===== Expanders (Filter & Others) ===== */
+            /* ===== Expanders ===== */
             div.streamlit-expanderHeader {{
-                background-color: {FOREST_GREEN} !important;
+                background-color: {KPI_BROWN} !important;
                 color: white !important;
                 font-weight: bold !important;
                 border-radius: 6px !important;
             }}
             div.streamlit-expanderHeader:hover {{
-                background-color: #3d6f56 !important;
+                background-color: #5e4633 !important;
             }}
             div.streamlit-expanderHeader[aria-expanded="true"] {{
-                background-color: {FOREST_GREEN_DARK} !important;
+                background-color: {KPI_BROWN_DARK} !important;
                 color: white !important;
             }}
             .streamlit-expanderContent {{
                 background-color: {PARCHMENT} !important;
-                border-left: 3px solid {FOREST_GREEN};
+                border-left: 3px solid {KPI_BROWN};
                 padding: 12px;
                 color: black !important;
             }}
 
-            /* ===== Scoped Form Buttons (Stack Maintenance) ===== */
-            .stTabs .stButton > button {{
-                background-color: {FOREST_GREEN} !important;
-                color: white !important;
-                border-radius: 6px;
-                font-weight: bold;
-                padding: 8px 16px;
-                border: none;
-            }}
-            .stTabs .stButton > button:hover {{
-                background-color: #3d6f56 !important;
-            }}
-
-            /* ===== Book Covers with Decorative Corners ===== */
+            /* ===== Book Covers ===== */
             .book-cover {{
                 margin-bottom: 14px;
                 position: relative;
@@ -156,60 +176,27 @@ def inject_custom_css():
             .book-cover img {{
                 width: 100%;
                 height: auto;
-                max-height: 400px;
+                max-height: 350px;
                 object-fit: contain;
                 border-radius: 8px;
                 border: 14px solid transparent;
-                border-image: linear-gradient(135deg, #e6ddc5, {FOREST_GREEN}, {FOREST_GREEN_DARK}) 1;
+                border-image: linear-gradient(135deg, #e6ddc5, {KPI_BROWN}, {KPI_BROWN_DARK}) 1;
                 box-shadow:
-                    0 0 12px rgba(30, 60, 40, 0.6),
+                    0 0 12px rgba(75, 58, 38, 0.6),
                     0 6px 16px rgba(0, 0, 0, 0.7),
-                    inset 0 0 18px rgba(40, 80, 55, 0.6),
+                    inset 0 0 18px rgba(75, 58, 38, 0.6),
                     inset 2px 2px 8px rgba(0,0,0,0.5);
                 transition: transform 0.3s ease, box-shadow 0.3s ease;
             }}
             .book-cover:hover img {{
                 transform: translateY(-6px) scale(1.05);
                 box-shadow:
-                    0 0 24px rgba(46, 78, 63, 1),
-                    0 12px 28px rgba(46, 78, 63, 0.85),
-                    inset 0 0 26px rgba(46, 78, 63, 0.95);
+                    0 0 24px rgba(75, 58, 38, 1),
+                    0 12px 28px rgba(75, 58, 38, 0.85),
+                    inset 0 0 26px rgba(75, 58, 38, 0.95);
                 cursor: pointer;
             }}
-            .book-cover::before,
-            .book-cover::after,
-            .book-cover .corner-top-right,
-            .book-cover .corner-bottom-left {{
-                content: "";
-                position: absolute;
-                width: 28px;
-                height: 28px;
-                border: 4px solid {FOREST_GREEN};
-                filter: drop-shadow(0 0 6px rgba(46, 78, 63, 0.9));
-                pointer-events: none;
-            }}
-            .book-cover::before {{
-                top: -10px; left: -10px;
-                border-right: none; border-bottom: none;
-                border-radius: 12px 0 0 0;
-            }}
-            .book-cover::after {{
-                bottom: -10px; right: -10px;
-                border-left: none; border-top: none;
-                border-radius: 0 0 12px 0;
-            }}
-            .book-cover .corner-top-right {{
-                top: -10px; right: -10px;
-                border-left: none; border-bottom: none;
-                border-radius: 0 12px 0 0;
-            }}
-            .book-cover .corner-bottom-left {{
-                bottom: -10px; left: -10px;
-                border-right: none; border-top: none;
-                border-radius: 0 0 0 12px;
-            }}
 
-            /* ===== Book Overlay ===== */
             .book-overlay {{
                 position: absolute;
                 top: 0; left: 0;
@@ -229,6 +216,27 @@ def inject_custom_css():
             }}
             .book-cover:hover .book-overlay {{
                 opacity: 1;
+            }}
+
+            /* ===== Mobile Optimization ===== */
+            @media (max-width: 768px) {{
+                .green-metric {{
+                    height: auto;
+                    padding: 12px;
+                }}
+                .green-metric h3 {{
+                    font-size: 1.2em !important;
+                }}
+                .green-metric p {{
+                    font-size: 1.1em !important;
+                }}
+                .book-cover img {{
+                    max-height: 250px;
+                }}
+                .stSidebar .stButton > button {{
+                    font-size: 0.9em;
+                    padding: 10px 12px;
+                }}
             }}
         </style>
         """,
@@ -265,6 +273,16 @@ def show_sidebar_doors(pages):
                 """,
                 unsafe_allow_html=True,
             )
+
+    # Sidebar Bookworm Image
+    st.sidebar.markdown(
+        """
+        <div class="sidebar-bookworm">
+            <img src="bookworm.png" alt="Bookworm"/>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     return st.session_state["page"]
 
