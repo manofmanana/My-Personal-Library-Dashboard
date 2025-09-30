@@ -92,7 +92,7 @@ if page == "Library":
                         Alejandro's Library
                     </h1>
                     <p class="banner-subtitle" style="font-size: clamp(0.9em, 2vw, 1.2em); margin: 0;">
-                        A dashboard tracking my reading journey across years, genres, and ideas.
+                        Dashboard tracking my reading journey across years, genres, and ideas.
                     </p>
                 </div>
             </div>
