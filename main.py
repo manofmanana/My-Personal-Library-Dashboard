@@ -12,7 +12,7 @@ import app.analytics as analytics
 # Load environment variables
 # =====================
 load_dotenv()
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "JulietA")  # fallback if not set
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")  
 
 # =====================
 # App/Theme Settings

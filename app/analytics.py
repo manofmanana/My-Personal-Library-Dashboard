@@ -116,19 +116,19 @@ def _apply_layout(fig, title: str):
         plot_bgcolor="black",
         font=dict(color="white", size=15),
         legend=dict(font=dict(color="white", size=12)),
-        margin=dict(l=100, r=60, t=130, b=80),  # 🔼 top margin increased to push chart lower
+        margin=dict(l=100, r=60, t=130, b=80),  # 🔼 more top margin so toolbar doesn't overlap
     )
     fig.update_xaxes(
         color="white", gridcolor="#444", 
         title_font=dict(size=13), tickfont=dict(size=11),
         automargin=True,
-        title_standoff=40  # 🔼 more space between x-axis title and labels
+        title_standoff=40
     )
     fig.update_yaxes(
         color="white", gridcolor="#444",
         title_font=dict(size=13), tickfont=dict(size=11),
         automargin=True,
-        title_standoff=50  # 🔼 more space between y-axis title and labels
+        title_standoff=50
     )
 
 
@@ -145,12 +145,11 @@ def show_charts(df: pd.DataFrame):
 
     st.subheader("Computer Lab Dashboard")
 
-    frame_height = 860  # 🔼 taller frame for breathing room
+    frame_height = 860  # taller frame
 
-    # Books per Year
+    # Books per Year (Bar Chart)
     by_year = dfx.dropna(subset=["year"]).groupby("year").size().reset_index(name="Books")
     by_year = by_year[by_year["year"] == by_year["year"].astype(int)]
-
     if not by_year.empty:
         if st.session_state.get("is_mobile", False):
             by_year = by_year.tail(10)
@@ -158,21 +157,20 @@ def show_charts(df: pd.DataFrame):
         _apply_layout(fig1, "Books per Year")
         st.components.v1.html(_wrap_chart(fig1, "Books per Year"), height=frame_height, scrolling=False)
 
-    # Books per Genre
-    by_genre = dfx.groupby("genre").size().reset_index(name="Books").sort_values("Books", ascending=True)
-
+    # Books per Genre (Donut Chart)
+    by_genre = dfx.groupby("genre").size().reset_index(name="Books").sort_values("Books", ascending=False)
     if not by_genre.empty:
         if st.session_state.get("is_mobile", False):
-            by_genre = by_genre.tail(10)
-        fig2 = px.bar(by_genre, x="Books", y="genre", orientation="h", color="Books",
-                      color_continuous_scale=APPLE_PALETTE)
+            by_genre = by_genre.head(10)
+        fig2 = px.pie(by_genre, names="genre", values="Books", hole=0.5,
+                      color_discrete_sequence=APPLE_PALETTE)
+        fig2.update_traces(textposition="inside", textinfo="percent+label")
         _apply_layout(fig2, "Books per Genre")
         st.components.v1.html(_wrap_chart(fig2, "Books per Genre"), height=frame_height, scrolling=False)
 
-    # Average Rating by Genre
+    # Average Rating by Genre (Bar Chart w/ labels)
     rated = dfx.dropna(subset=["rating"])
     by_genre_rating = rated.groupby("genre")["rating"].mean().reset_index().sort_values("rating", ascending=False)
-
     if not by_genre_rating.empty:
         if st.session_state.get("is_mobile", False):
             by_genre_rating = by_genre_rating.head(8)
@@ -188,27 +186,42 @@ def show_charts(df: pd.DataFrame):
         _apply_layout(fig3, "Average Rating by Genre")
         st.components.v1.html(_wrap_chart(fig3, "Average Rating by Genre"), height=frame_height, scrolling=False)
 
-    # Top 5 Authors
+    # Top 5 Authors (Bubble Chart)
     by_author = dfx.groupby("author").size().reset_index(name="Books").sort_values("Books", ascending=False).head(5)
-
     if not by_author.empty:
-        fig4 = px.bar(by_author, x="author", y="Books", color="Books",
-                      color_continuous_scale=APPLE_PALETTE, text="Books")
+        fig4 = px.scatter(by_author, x="author", y="Books", size="Books", color="author",
+                          color_discrete_sequence=APPLE_PALETTE, text="Books")
+        fig4.update_traces(textposition="top center")
         _apply_layout(fig4, "Top 5 Authors by Book Count")
         st.components.v1.html(_wrap_chart(fig4, "Top 5 Authors by Book Count"), height=frame_height, scrolling=False)
 
-    # Ratings Distribution
+    # Ratings Distribution (Violin + inner box)
     if not rated.empty:
-        fig5 = px.histogram(rated, x="rating", nbins=20,
-                            color_discrete_sequence=APPLE_PALETTE, opacity=0.9)
-        fig5.update_xaxes(range=[0, 5])
-        _apply_layout(fig5, "Ratings Distribution")
-        st.components.v1.html(_wrap_chart(fig5, "Ratings Distribution"), height=frame_height, scrolling=False)
+        # Limit categories on mobile for readability
+        rated_for_violin = rated.copy()
+        if st.session_state.get("is_mobile", False):
+            top_genres = (
+                rated_for_violin["genre"].value_counts()
+                .head(8)
+                .index
+            )
+            rated_for_violin = rated_for_violin[rated_for_violin["genre"].isin(top_genres)]
+        fig5 = px.violin(
+            rated_for_violin,
+            x="genre",
+            y="rating",
+            box=True,            # inner box for medians/quartiles
+            points=False,        # keep it clean
+            color="genre",
+            color_discrete_sequence=APPLE_PALETTE
+        )
+        fig5.update_yaxes(range=[0, 5])
+        _apply_layout(fig5, "Ratings Distribution (Violin)")
+        st.components.v1.html(_wrap_chart(fig5, "Ratings Distribution (Violin)"), height=frame_height, scrolling=False)
 
-    # Average Rating by Year
+    # Average Rating by Year (Line Chart)
     by_year_rating = rated.dropna(subset=["year"]).groupby("year")["rating"].mean().reset_index().sort_values("year")
     by_year_rating = by_year_rating[by_year_rating["year"] == by_year_rating["year"].astype(int)]
-
     if not by_year_rating.empty:
         if st.session_state.get("is_mobile", False):
             by_year_rating = by_year_rating.tail(10)
