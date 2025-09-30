@@ -1,5 +1,6 @@
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 
 # 🎨 Apple-inspired playful colors
@@ -157,16 +158,27 @@ def show_charts(df: pd.DataFrame):
         _apply_layout(fig1, "Books per Year")
         st.components.v1.html(_wrap_chart(fig1, "Books per Year"), height=frame_height, scrolling=False)
 
-    # Books per Genre (Donut Chart)
+    # Books per Genre (Sunburst)
+    # Mobile tweaks: fewer slices, larger font via uniformtext, outside labels for readability.
     by_genre = dfx.groupby("genre").size().reset_index(name="Books").sort_values("Books", ascending=False)
     if not by_genre.empty:
         if st.session_state.get("is_mobile", False):
-            by_genre = by_genre.head(10)
-        fig2 = px.pie(by_genre, names="genre", values="Books", hole=0.5,
-                      color_discrete_sequence=APPLE_PALETTE)
-        fig2.update_traces(textposition="inside", textinfo="percent+label")
-        _apply_layout(fig2, "Books per Genre")
-        st.components.v1.html(_wrap_chart(fig2, "Books per Genre"), height=frame_height, scrolling=False)
+            by_genre = by_genre.head(10)  # limit clutter on small screens
+        fig2 = px.sunburst(
+            by_genre,
+            path=["genre"],
+            values="Books",
+            color="Books",
+            color_continuous_scale=APPLE_PALETTE
+        )
+        fig2.update_traces(
+            insidetextorientation="radial",
+            textinfo="label+percent entry",
+            hovertemplate="<b>%{label}</b><br>Books: %{value}<extra></extra>"
+        )
+        fig2.update_layout(uniformtext_minsize=12, uniformtext_mode="hide")
+        _apply_layout(fig2, "Books per Genre (Sunburst)")
+        st.components.v1.html(_wrap_chart(fig2, "Books per Genre (Sunburst)"), height=frame_height, scrolling=False)
 
     # Average Rating by Genre (Bar Chart w/ labels)
     rated = dfx.dropna(subset=["rating"])
@@ -186,38 +198,68 @@ def show_charts(df: pd.DataFrame):
         _apply_layout(fig3, "Average Rating by Genre")
         st.components.v1.html(_wrap_chart(fig3, "Average Rating by Genre"), height=frame_height, scrolling=False)
 
-    # Top 5 Authors (Bubble Chart)
+    # Top 5 Authors (Lollipop Chart: stems + circle markers)
     by_author = dfx.groupby("author").size().reset_index(name="Books").sort_values("Books", ascending=False).head(5)
     if not by_author.empty:
-        fig4 = px.scatter(by_author, x="author", y="Books", size="Books", color="author",
-                          color_discrete_sequence=APPLE_PALETTE, text="Books")
-        fig4.update_traces(textposition="top center")
-        _apply_layout(fig4, "Top 5 Authors by Book Count")
-        st.components.v1.html(_wrap_chart(fig4, "Top 5 Authors by Book Count"), height=frame_height, scrolling=False)
+        # Build a lollipop: line from x=0 to x=Books for each author, and a circle at the end
+        fig4 = go.Figure()
 
-    # Ratings Distribution (Violin + inner box)
-    if not rated.empty:
-        # Limit categories on mobile for readability
-        rated_for_violin = rated.copy()
-        if st.session_state.get("is_mobile", False):
-            top_genres = (
-                rated_for_violin["genre"].value_counts()
-                .head(8)
-                .index
+        authors_order = list(by_author["author"])[::-1]  # reverse for nicer top-down layout
+        by_author_sorted = by_author.set_index("author").loc[authors_order].reset_index()
+
+        # stems (lines)
+        for _, r in by_author_sorted.iterrows():
+            fig4.add_trace(
+                go.Scatter(
+                    x=[0, r["Books"]],
+                    y=[r["author"], r["author"]],
+                    mode="lines",
+                    line=dict(color=APPLE_PALETTE[0], width=4),
+                    showlegend=False
+                )
             )
-            rated_for_violin = rated_for_violin[rated_for_violin["genre"].isin(top_genres)]
-        fig5 = px.violin(
-            rated_for_violin,
-            x="genre",
-            y="rating",
-            box=True,            # inner box for medians/quartiles
-            points=False,        # keep it clean
-            color="genre",
-            color_discrete_sequence=APPLE_PALETTE
+        # lollipop heads (markers + label)
+        fig4.add_trace(
+            go.Scatter(
+                x=by_author_sorted["Books"],
+                y=by_author_sorted["author"],
+                mode="markers+text",
+                marker=dict(size=18, color=APPLE_PALETTE[1], line=dict(color="white", width=2)),
+                text=by_author_sorted["Books"],
+                textposition="middle right",
+                textfont=dict(size=14, color="white"),
+                showlegend=False
+            )
         )
-        fig5.update_yaxes(range=[0, 5])
-        _apply_layout(fig5, "Ratings Distribution (Violin)")
-        st.components.v1.html(_wrap_chart(fig5, "Ratings Distribution (Violin)"), height=frame_height, scrolling=False)
+
+        fig4.update_yaxes(categoryorder="array", categoryarray=authors_order)
+        fig4.update_xaxes(range=[0, max(by_author_sorted["Books"]) * 1.2])  # little breathing room
+        _apply_layout(fig4, "Top 5 Authors by Book Count (Lollipop)")
+        st.components.v1.html(_wrap_chart(fig4, "Top 5 Authors by Book Count (Lollipop)"), height=frame_height, scrolling=False)
+
+    # Ratings Distribution (Desktop: Violin, Mobile: Histogram)
+    if not rated.empty:
+        is_mobile = st.session_state.get("is_mobile", False)
+        if is_mobile:
+            fig5 = px.histogram(rated, x="rating", nbins=20,
+                                color_discrete_sequence=APPLE_PALETTE, opacity=0.9)
+            fig5.update_xaxes(range=[0, 5])
+            _apply_layout(fig5, "Ratings Distribution (Histogram)")
+            st.components.v1.html(_wrap_chart(fig5, "Ratings Distribution (Histogram)"), height=frame_height, scrolling=False)
+        else:
+            rated_for_violin = rated.copy()
+            fig5 = px.violin(
+                rated_for_violin,
+                x="genre",
+                y="rating",
+                box=True,
+                points=False,
+                color="genre",
+                color_discrete_sequence=APPLE_PALETTE
+            )
+            fig5.update_yaxes(range=[0, 5])
+            _apply_layout(fig5, "Ratings Distribution (Violin)")
+            st.components.v1.html(_wrap_chart(fig5, "Ratings Distribution (Violin)"), height=frame_height, scrolling=False)
 
     # Average Rating by Year (Line Chart)
     by_year_rating = rated.dropna(subset=["year"]).groupby("year")["rating"].mean().reset_index().sort_values("year")
