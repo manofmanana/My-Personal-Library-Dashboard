@@ -61,7 +61,7 @@ def inject_custom_css():
 
             /* ===== Sidebar Bookworm Image ===== */
             .sidebar-bookworm {{
-                margin-top: 300px; /* Lowered vertically */
+                margin-top: 250px; /* Lowered vertically */
                 display: flex;
                 justify-content: center;
                 padding: 10px;
