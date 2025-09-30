@@ -1,95 +1,74 @@
-# Personal Library Tracker
+# Alejandro's Library
 
-A Streamlit-powered dashboard and SQLite database for tracking my personal library.  
-Think of it as the first draft of the floor-to-ceiling library I hope to build one day, but in SQL form.  
+## Overview
+Alejandro's Library is a personal digital library and dashboard. It allows books to be added, edited, rated, visualized, and filtered. Built with **SQLite, Python, Streamlit, and Plotly**, the app feels like having your own public library on the web. 
 
----
+When I was a young child, my mom would take me often to public libraries around town. She nurtured my love of reading at a young age. I will forever be grateful for that, so this is an ode to her. Thanks madre. 
 
-## Purpose
-
-This project keeps track of the books I’ve read, their authors, genres, and ratings. It’s built as my final project for **CS50’s Introduction to Databases with SQL**.  
-
-It is both academic and personal. On the academic side, it demonstrates a normalized relational schema, CRUD operations, indexing, and visualization. On the personal side, it is the database version of a lifelong love affair with books — one that began in public libraries my mom took me to as a kid, continued through countless late nights reading, and is now represented in this project.  
-
-One day I’d like to build a home library like the one in Disney’s *Beauty and the Beast*. Since home ownership has been priced into absurdity by late-stage capitalism and BlackRock’s shopping spree, this will have to do for now.  
+The project began as a CS50 SQL final project and grew into a full interactive application. It serves both as a demonstration of relational database design and as a personal portfolio project.
 
 ---
 
 ## Features
+- Add books with title, author, genre, year read, ISBN, subjects, and cover image
+- Edit existing entries with automatic cover and subject lookups
+- Delete books and associated ratings
+- Track ratings on a 0.0–5.0 scale
+- Visualize data in a Streamlit dashboard with diverse chart types
+- Filter and search books by title, author, genre, or year
+- Export filtered collections to CSV
 
-- **Relational Database** with four tables: `authors`, `genres`, `books`, and `ratings`.  
-- **Streamlit Dashboard** with:  
-  - Add, edit, and delete book entries (password-protected).  
-  - Automatic fetching of book covers, ISBNs, and subjects from Open Library and Google Books.  
-  - KPI cards summarizing total books, average ratings, most popular genre, and years covered.  
-  - Interactive charts showing reading trends.  
-  - Search and filters for genre and year.  
-  - Export filtered data to CSV.  
-- **Design Touches**: Gold-framed book covers, hover effects with ratings and genre, decorative corners, and a banner to set the mood.  
+---
+
+## Tech Stack
+- **Backend**: SQLite, SQL queries
+- **Frontend**: Streamlit with custom CSS
+- **Visualization**: Plotly Express charts
+- **Data Enrichment**: Open Library API
+- **Languages**: Python, SQL, HTML/CSS
 
 ---
 
 ## Installation
-
-### Requirements
-- Python 3.9+  
-- SQLite  
-- Dependencies: `streamlit`, `pandas`, `plotly`, `requests`
-
-### Setup
-Clone this repository and install dependencies:
+Clone or download the repository, then install dependencies:
 
 ```bash
 pip install -r requirements.txt
-Run the App
-From the project directory, run:
+Run the app:
 
 bash
 Copy code
-streamlit run app/main.py
-Open the URL Streamlit provides (usually http://localhost:8501) in your browser.
-
-Usage
-Use the dashboard to browse your library, filter by genre or year, and view analytics.
-
-To manage books (add, edit, delete), enter the password:
-
-nginx
-Copy code
-JulietA
-Add new books through the form. Covers and ISBNs will be fetched automatically if possible.
-
-Hover over book covers to see rating and genre details.
-
-Export your filtered library to CSV for safekeeping or analysis.
-
+streamlit run main.py
 File Structure
-schema.sql — Creates the database schema.
+main.py: Streamlit entry point, navigation, and layout
 
-queries.sql — Example queries (insert, update, delete, select).
+app/ui.py: Custom CSS and UI components
 
-design.md — Technical write-up of the database design and scope.
+app/db_utils.py: Database utilities for CRUD operations
 
-main.py — Main Streamlit app logic and UI.
+app/analytics.py: Data visualization functions
 
-ui.py — Components for KPIs, book grid, and forms.
+schema.sql: SQL schema defining tables
 
-analytics.py — Visualization code (charts with Plotly).
+queries.sql: Common SQL queries
 
-db_utils.py — Utility functions for interacting with the database and APIs.
+DESIGN.md: Design document
 
----
+README.md: This file
 
-Acknowledgments
-My mom: for endless trips to public libraries that made me fall in love with reading.
+Example Queries
+Average rating per book
 
-Harvard's CS50: for providing the structure to turn that love into code.
+Count of books per genre
 
-Open Library & Google Books: for the book covers and metadata.
+Top-rated authors
 
-Disney’s Beauty and the Beast: for setting unrealistic expectations for what a library can look like.
+Most recent books read
 
-Final Note
-This project is a personal library tracker, but more than that it is a placeholder for a dream. Someday I’d like to walk into a room filled with all the books I’ve read, walls lined with shelves, the air thick with memory and curiosity. Until then, it lives here in SQL tables and Streamlit code.
+See queries.sql for examples.
 
-“A room without books is like a body without a soul.” — Cicero
+Purpose
+This project is both a course assignment and a personal archive. It is inspired by afternoons in public libraries and the dream of one day having a personal library room. Until then, this project serves as a library in code.
+
+License
+This project is for educational purposes under the CS50 SQL final project requirements.
