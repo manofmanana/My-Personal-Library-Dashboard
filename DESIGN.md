@@ -10,6 +10,12 @@ On the personal side, it recreates the feeling of having a public library of my 
 
 Knowledge should not be gatekept. It should be free for anyone with curiosity. This library is one attempt to honor that idea. Also reading is just cool and fun. Thank you mom for taking me to libraries as a kid. 
 
+See Demo video here:
+https://www.youtube.com/watch?v=lUbMDb5nmXw
+
+See live deployment via Streamlit here:
+https://alejandros-personal-library-dashboard.streamlit.app/
+
 ---
 
 ## Scope
