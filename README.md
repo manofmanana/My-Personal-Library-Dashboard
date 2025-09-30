@@ -7,6 +7,12 @@ When I was a young child, my mom would take me often to public libraries around 
 
 The project began as a CS50 SQL final project and grew into a full interactive application. It serves both as a demonstration of relational database design and as a personal portfolio project.
 
+See Demo video here:
+https://www.youtube.com/watch?v=lUbMDb5nmXw
+
+See live deployment via Streamlit here:
+https://alejandros-personal-library-dashboard.streamlit.app/
+
 ---
 
 ## Features
