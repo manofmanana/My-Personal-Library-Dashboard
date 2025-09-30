@@ -192,13 +192,17 @@ def inject_custom_css():
             .book-cover {{
                 margin-bottom: 14px;
                 position: relative;
-                display: inline-block;
-                overflow: visible;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: auto;
             }}
             .book-cover img {{
                 width: 100%;
                 height: auto;
-                max-height: 350px;
+                max-width: 100%;
+                max-height: 100%;
                 object-fit: contain;
                 border-radius: 8px;
                 border: 14px solid transparent;
@@ -218,7 +222,6 @@ def inject_custom_css():
                     inset 0 0 26px rgba(75, 58, 38, 0.95);
                 cursor: pointer;
             }}
-
             .book-overlay {{
                 position: absolute;
                 top: 0; left: 0;
@@ -258,12 +261,22 @@ def inject_custom_css():
                 .green-metric p {{
                     font-size: 1.3em !important;
                 }}
+                .book-cover {{
+                    flex: 1 1 calc(50% - 10px);
+                    max-width: calc(50% - 10px);
+                }}
                 .book-cover img {{
-                    max-height: 250px;
+                    max-height: none;
                 }}
                 .stSidebar .stButton > button {{
                     font-size: 0.9em;
                     padding: 10px 12px;
+                }}
+            }}
+            @media (max-width: 480px) {{
+                .book-cover {{
+                    flex: 1 1 100%;
+                    max-width: 100%;
                 }}
             }}
         </style>
