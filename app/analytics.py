@@ -116,17 +116,19 @@ def _apply_layout(fig, title: str):
         plot_bgcolor="black",
         font=dict(color="white", size=15),
         legend=dict(font=dict(color="white", size=12)),
-        margin=dict(l=100, r=60, t=60, b=80),
+        margin=dict(l=100, r=60, t=130, b=80),  # 🔼 top margin increased to push chart lower
     )
     fig.update_xaxes(
         color="white", gridcolor="#444", 
         title_font=dict(size=13), tickfont=dict(size=11),
-        automargin=True
+        automargin=True,
+        title_standoff=40  # 🔼 more space between x-axis title and labels
     )
     fig.update_yaxes(
         color="white", gridcolor="#444",
         title_font=dict(size=13), tickfont=dict(size=11),
-        automargin=True
+        automargin=True,
+        title_standoff=50  # 🔼 more space between y-axis title and labels
     )
 
 
@@ -143,16 +145,15 @@ def show_charts(df: pd.DataFrame):
 
     st.subheader("Computer Lab Dashboard")
 
-    frame_height = 820  # taller frame for breathing room
+    frame_height = 860  # 🔼 taller frame for breathing room
 
     # Books per Year
     by_year = dfx.dropna(subset=["year"]).groupby("year").size().reset_index(name="Books")
     by_year = by_year[by_year["year"] == by_year["year"].astype(int)]
 
     if not by_year.empty:
-        # Limit number of bars on mobile to avoid squished x-axis
         if st.session_state.get("is_mobile", False):
-            by_year = by_year.tail(10)  # only last 10 years for mobile
+            by_year = by_year.tail(10)
         fig1 = px.bar(by_year, x="year", y="Books", color="Books", color_continuous_scale=APPLE_PALETTE)
         _apply_layout(fig1, "Books per Year")
         st.components.v1.html(_wrap_chart(fig1, "Books per Year"), height=frame_height, scrolling=False)
@@ -162,7 +163,7 @@ def show_charts(df: pd.DataFrame):
 
     if not by_genre.empty:
         if st.session_state.get("is_mobile", False):
-            by_genre = by_genre.tail(10)  # only top 10 genres for mobile
+            by_genre = by_genre.tail(10)
         fig2 = px.bar(by_genre, x="Books", y="genre", orientation="h", color="Books",
                       color_continuous_scale=APPLE_PALETTE)
         _apply_layout(fig2, "Books per Genre")
@@ -174,7 +175,7 @@ def show_charts(df: pd.DataFrame):
 
     if not by_genre_rating.empty:
         if st.session_state.get("is_mobile", False):
-            by_genre_rating = by_genre_rating.head(8)  # fewer bars on mobile
+            by_genre_rating = by_genre_rating.head(8)
         fig3 = px.bar(by_genre_rating, x="genre", y="rating", color="rating",
                       color_continuous_scale=APPLE_PALETTE, text="rating")
         fig3.update_traces(
@@ -210,7 +211,7 @@ def show_charts(df: pd.DataFrame):
 
     if not by_year_rating.empty:
         if st.session_state.get("is_mobile", False):
-            by_year_rating = by_year_rating.tail(10)  # only last 10 years on mobile
+            by_year_rating = by_year_rating.tail(10)
         fig6 = px.line(by_year_rating, x="year", y="rating", markers=True)
         fig6.update_traces(line=dict(color="#1f77b4"), marker=dict(color="#d62728", size=10))
         fig6.update_yaxes(range=[0, 5])

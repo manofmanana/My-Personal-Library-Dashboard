@@ -342,13 +342,13 @@ def show_kpis(df: pd.DataFrame):
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown(f"<div class='green-metric'><h3>Total Books</h3><p>{total_books}</p></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='green-metric'><h3>Books Read</h3><p>{total_books}</p></div>", unsafe_allow_html=True)
     with c2:
-        st.markdown(f"<div class='green-metric'><h3>Avg. Rating</h3><p>{avg_rating}</p></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='green-metric'><h3>Average Rating</h3><p>{avg_rating}</p></div>", unsafe_allow_html=True)
     with c3:
-        st.markdown(f"<div class='green-metric'><h3>Most Popular Genre</h3><p>{most_genre}</p></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='green-metric'><h3>Top Genre</h3><p>{most_genre}</p></div>", unsafe_allow_html=True)
     with c4:
-        st.markdown(f"<div class='green-metric'><h3>Years Covered</h3><p>{years_covered}</p></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='green-metric'><h3>Reading Career</h3><p>{years_covered}</p></div>", unsafe_allow_html=True)
 
 # =====================
 # Book Grid
