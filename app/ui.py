@@ -32,15 +32,15 @@ def inject_custom_css():
                 text-align: center;
                 font-size: 2.2em;
                 font-weight: bold;
-                margin-top: 10px;
-                margin-bottom: 6px;
+                margin-top: auto;
+                margin-bottom: auto;
                 color: {KPI_BROWN_DARK};
             }}
             .main-subtitle {{
                 text-align: center;
                 font-size: 1.1em;
                 font-style: italic;
-                margin-bottom: 30px;
+                margin-bottom: auto;
                 color: {KPI_BROWN};
             }}
 
@@ -145,9 +145,9 @@ def inject_custom_css():
             .stPasswordInput > div > input {{
                 background-color: white !important;
                 color: black !important;
-                border: 1px solid {KPI_BROWN} !important;
-                border-radius: 6px;
-                padding: 6px;
+                border: 0px solid {KPI_BROWN} !important;
+                border-radius: 0px;
+                padding: 0px;
                 font-size: 0.9em;
             }}
             .stTextInput > div > div > input:focus,
@@ -156,7 +156,7 @@ def inject_custom_css():
             .stNumberInput > div > input:focus,
             .stPasswordInput > div > input:focus {{
                 outline: none !important;
-                border: 2px solid {KPI_BROWN} !important;
+                border: 0px solid {KPI_BROWN} !important;
                 box-shadow: 0 0 6px {KPI_BROWN};
             }}
             .stSelectbox [role="combobox"] {{
