@@ -29,19 +29,23 @@ def inject_custom_css():
 
             /* ===== Dashboard Title ===== */
             .main-title {{
-                text-align: center;
+                text-align: center !important;
                 font-size: 2.2em;
                 font-weight: bold;
                 margin-top: auto;
                 margin-bottom: auto;
                 color: {KPI_BROWN_DARK};
+                width: 100%;
+                display: block;
             }}
             .main-subtitle {{
-                text-align: center;
+                text-align: center !important;
                 font-size: 1.1em;
                 font-style: italic;
                 margin-bottom: auto;
                 color: {KPI_BROWN};
+                width: 100%;
+                display: block;
             }}
 
             /* ===== Sidebar ===== */
@@ -106,7 +110,7 @@ def inject_custom_css():
                 border-radius: 14px;
                 padding: 18px;
                 margin: 6px;
-                text-align: center;
+                text-align: center !important;
                 box-shadow: 0 6px 16px rgba(0,0,0,0.6);
                 transition: all 0.3s ease-in-out;
                 height: 140px;
@@ -121,14 +125,16 @@ def inject_custom_css():
                 font-size: 1.3em !important;
                 font-weight: bold !important;
                 color: white !important;
-                text-align: center;
+                text-align: center !important;
+                width: 100%;
             }}
             .green-metric p {{
                 margin: 0;
                 font-size: 1.6em !important;
                 font-weight: bold !important;
                 color: white !important;
-                text-align: center;
+                text-align: center !important;
+                width: 100%;
             }}
             .green-metric:hover {{
                 box-shadow: 0 0 24px {KPI_BROWN},
@@ -247,9 +253,11 @@ def inject_custom_css():
             @media (max-width: 768px) {{
                 .main-title {{
                     font-size: 1.6em;
+                    text-align: center !important;
                 }}
                 .main-subtitle {{
                     font-size: 1em;
+                    text-align: center !important;
                 }}
                 .green-metric {{
                     height: auto;
@@ -257,9 +265,11 @@ def inject_custom_css():
                 }}
                 .green-metric h3 {{
                     font-size: 1.1em !important;
+                    text-align: center !important;
                 }}
                 .green-metric p {{
                     font-size: 1.3em !important;
+                    text-align: center !important;
                 }}
                 .book-cover {{
                     flex: 1 1 calc(50% - 10px);
