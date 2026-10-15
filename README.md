@@ -1,80 +1,93 @@
 # Alejandro's Library
 
-## Overview
-Alejandro's Library is a personal digital library and dashboard. It allows books to be added, edited, rated, visualized, and filtered. Built with **SQLite, Python, Streamlit, and Plotly**, the app feels like having your own public library on the web. 
+[![Tests](https://github.com/manofmanana/My-Personal-Library-Dashboard/actions/workflows/tests.yml/badge.svg)](https://github.com/manofmanana/My-Personal-Library-Dashboard/actions/workflows/tests.yml)
 
-When I was a young child, my mom would take me often to public libraries around town. She nurtured my love of reading at a young age. I will forever be grateful for that, so this is an ode to her. Thanks madre. 
+### ▶ [Open the library](https://alejandros-personal-library-dashboard.streamlit.app/)
 
-The project began as a CS50 SQL final project and grew into a full interactive application. It serves both as a demonstration of relational database design and as a personal portfolio project.
+A personal digital library and reading dashboard: every book I've read, with covers, ratings, genres, and stats. Built with **SQLite, Python, Streamlit, and Plotly**, it feels like having your own public library on the web, and it works on phones too.
 
-See Demo video here:
-https://www.youtube.com/watch?v=lUbMDb5nmXw
+When I was a young child, my mom would take me often to public libraries around town. She nurtured my love of reading at a young age. I will forever be grateful for that, so this is an ode to her. Thanks madre.
 
-See live deployment via Streamlit here:
-https://alejandros-personal-library-dashboard.streamlit.app/
+The project began as my **CS50 SQL** final project and grew into a full interactive application. It's both a demonstration of relational database design and a personal portfolio project.
 
----
+**Demo video:** https://www.youtube.com/watch?v=lUbMDb5nmXw
 
-## Features
-- Add books with title, author, genre, year read, ISBN, subjects, and cover image
-- Edit existing entries with automatic cover and subject lookups
-- Delete books and associated ratings
-- Track ratings on a 0.0–5.0 scale
-- Visualize data in a Streamlit dashboard with diverse chart types
-- Filter and search books by title, author, genre, or year
-- Export filtered collections to CSV
+![The Library home page: banner, quote, reading stats, and latest reads](docs/library.jpg)
+
+| Bookstacks | Computer Lab |
+|---|---|
+| ![Every book as a cover with its title, author, rating, and genre](docs/bookstacks.jpg) | ![Charts of books per year, ratings, and genres](docs/computer-lab.jpg) |
+
+| On a phone | |
+|---|---|
+| <img src="docs/phone.jpg" alt="Home page on a phone" width="260"> | <img src="docs/phone-bookstacks.jpg" alt="Bookstacks on a phone" width="260"> |
 
 ---
 
-## Tech Stack
-- **Backend**: SQLite, SQL queries
-- **Frontend**: Streamlit with custom CSS
-- **Visualization**: Plotly Express charts
-- **Data Enrichment**: Open Library API
-- **Languages**: Python, SQL, HTML/CSS
+## Pages
 
----
+- **Library**: a welcome banner, a rotating quote, my reading stats, and shelves of my latest reads and all-time favorites.
+- **Bookstacks**: every book as a cover with its title, author, star rating, and genre. Search by title or author, filter by genre, year, or rating, sort, and download the results as CSV. Tap a cover to open the book on Open Library.
+- **Computer Lab**: charts of books per year, how I rate books, top genres, best-rated genres, and my average rating over time.
+- **Stack Maintenance**: password-protected forms to add, edit, and remove books. New books get their cover, ISBN, and subjects looked up automatically from Open Library (falling back to Google Books).
 
-## Installation
-Clone or download the repository, then install dependencies:
+## Run it locally
 
 ```bash
+git clone https://github.com/manofmanana/My-Personal-Library-Dashboard.git
+cd My-Personal-Library-Dashboard
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-Run the app:
-
-bash
-Copy code
 streamlit run main.py
-File Structure
-main.py: Streamlit entry point, navigation, and layout
+```
 
-app/ui.py: Custom CSS and UI components
+To use **Stack Maintenance**, set an admin password, either in a `.env` file:
 
-app/db_utils.py: Database utilities for CRUD operations
+```
+ADMIN_PASSWORD=choose-something
+```
 
-app/analytics.py: Data visualization functions
+or, on Streamlit Community Cloud, under **App settings → Secrets**:
 
-schema.sql: SQL schema defining tables
+```toml
+ADMIN_PASSWORD = "choose-something"
+```
 
-queries.sql: Common SQL queries
+Without a password, the editing page stays locked.
 
-DESIGN.md: Design document
+> **Saving changes for good:** Streamlit Community Cloud gives the app a temporary disk, so books added through the live site disappear the next time the app restarts. To change the library permanently, edit it locally (or with SQL) and commit `books_normalized.db`.
 
-README.md: This file
+## Tests
 
-Example Queries
-Average rating per book
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
 
-Count of books per genre
+The tests cover the database code (adding, editing, and removing books, merging genres that differ only in capitalization, and cleaning up leftovers), search and filtering, the cover lookup working offline, and they render every page with Streamlit's test runner. They run on GitHub Actions for every push.
 
-Top-rated authors
+## How it's built
 
-Most recent books read
+| File | What's in it |
+|---|---|
+| `main.py` | Entry point: page setup and navigation |
+| `app/views.py` | The four pages |
+| `app/db_utils.py` | Reading and writing the database |
+| `app/library.py` | Search, filters, sorting, and stats (plain functions, easy to test) |
+| `app/covers.py` | Cover / ISBN lookups from Open Library and Google Books |
+| `app/theme.py` | The banner, stat cards, cover shelves, and chart style |
+| `.streamlit/config.toml` | Colors and fonts |
+| `static/` | Images served directly by Streamlit |
+| `schema.sql`, `queries.sql`, `seed.sql` | The database schema, example queries, and a starter data set |
+| `DESIGN.md` | The database design document (CS50 SQL) |
 
-See queries.sql for examples.
+The database has four normalized tables (authors, genres, books, ratings) with indexes on the columns used for joins. See [DESIGN.md](DESIGN.md) for the full design and entity relationship diagram.
 
-Purpose
-This project is both a course assignment and a personal archive. It is inspired by afternoons in public libraries and the dream of one day having a personal library room. Until then, this project serves as a library in code.
+## Acknowledgements
 
-License
-This project is for educational purposes under the CS50 SQL final project requirements.
+- **CS50 SQL** staff, for the course
+- **Open Library** and **Google Books**, for book covers and details
+- **Fraunces** and **Inter** fonts from Google Fonts
+- **AI assistance** was used for a cleanup and redesign pass (mobile layout, tests, bug fixes). Final design choices are my own.
+- **My mom**, for all those afternoons at the library

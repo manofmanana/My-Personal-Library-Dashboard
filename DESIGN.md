@@ -26,7 +26,7 @@ This project tracks books and metadata about them. It provides:
 - Editing existing entries, refreshing cover and subject data automatically if ISBN/title/author change
 - Deleting books and associated ratings
 - Recording and updating ratings (0.0–5.0)
-- Viewing library data in a Streamlit dashboard with KPIs and diverse charts (bar, sunburst, violin, lollipop, line)
+- Viewing library data in a Streamlit dashboard with KPIs and charts (books per year, rating distribution, top and best-rated genres, rating over time)
 - Searching, filtering, and exporting the collection to CSV
 
 ### Out of Scope
@@ -41,22 +41,27 @@ This project tracks books and metadata about them. It provides:
 
 The database schema contains four normalized tables.
 
-Authors
+**Authors**
+
 ```sql
 CREATE TABLE authors (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE NOT NULL
 );
-Genres
-sql
-Copy code
+```
+
+**Genres**
+
+```sql
 CREATE TABLE genres (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE NOT NULL
 );
-Books
-sql
-Copy code
+```
+
+**Books**
+
+```sql
 CREATE TABLE books (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -69,30 +74,34 @@ CREATE TABLE books (
     FOREIGN KEY (author_id) REFERENCES authors(id),
     FOREIGN KEY (genre_id) REFERENCES genres(id)
 );
-Ratings
-sql
-Copy code
+```
+
+**Ratings**
+
+```sql
 CREATE TABLE ratings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     book_id INTEGER NOT NULL,
     rating REAL NOT NULL,
     FOREIGN KEY (book_id) REFERENCES books(id)
 );
+```
 
 ---
 
 ## Relationships
-One author can write many books (1:N)
 
-One genre can classify many books (1:N)
-
-One book can have many ratings (1:N)
+- One author can write many books (1:N)
+- One genre can classify many books (1:N)
+- One book can have many ratings (1:N)
 
 This eliminates redundancy and supports normalized queries.
 
 ---
 
 ## Entity Relationship Diagram
+
+```mermaid
 erDiagram
     AUTHORS ||--o{ BOOKS : writes
     GENRES  ||--o{ BOOKS : classifies
@@ -120,41 +129,43 @@ erDiagram
         int book_id FK
         real rating
     }
+```
 
 ---
 
 ## Optimizations
-Indexes:
 
-sql
-Copy code
-CREATE INDEX idx_books_author_id ON books(author_id);
-CREATE INDEX idx_books_genre_id ON books(genre_id);
-CREATE INDEX idx_ratings_book_id ON ratings(book_id);
-Separate tables for authors and genres prevent duplicates
+Indexes on the columns used for joins and filtering (created in `schema.sql`, and added to older databases when the app starts):
 
-Ratings stored separately, allowing future support for multiple ratings per book
+```sql
+CREATE INDEX idx_books_author ON books(author_id);
+CREATE INDEX idx_books_genre ON books(genre_id);
+CREATE INDEX idx_books_year ON books(year);
+CREATE INDEX idx_ratings_book ON ratings(book_id);
+```
 
-Book covers and subjects are enriched via APIs like Open Library
+- Separate tables for authors and genres prevent duplicates. Genre and author lookups ignore capitalization, so "Sci-Fi" and "Sci-FI" become one genre.
+- Ratings are stored separately, allowing future support for multiple ratings per book.
+- After every edit, authors, genres, and ratings that no longer belong to any book are cleaned up.
+- Book covers and subjects are enriched via APIs like Open Library and Google Books.
 
 ---
 
 ## Limitations
-Each book currently supports only one author and one genre
 
-API cover data is sometimes wrong or missing
-
-Admin password is minimal and hardcoded (not secure)
-
-Not multi-user
+- Each book currently supports only one author and one genre.
+- API cover data is sometimes wrong or missing.
+- There is a single admin password (stored in Streamlit secrets or a local `.env` file), not real user accounts.
+- On Streamlit Community Cloud, changes made in the app are lost when the app restarts, because the server's disk is temporary. Permanent changes are made locally and committed.
+- Not multi-user.
 
 ---
 
 ## Queries
-Examples of supported queries:
 
-sql
-Copy code
+Examples of supported queries (see `queries.sql` for more):
+
+```sql
 -- Select all books with author and genre
 SELECT b.id, b.title, a.name AS author, g.name AS genre, b.year, b.isbn
 FROM books b
@@ -167,11 +178,14 @@ FROM books b
 JOIN ratings r ON b.id = r.book_id
 GROUP BY b.id
 ORDER BY avg_rating DESC;
+```
+
 Additional queries include top authors, books above a rating threshold, and counts per genre.
 
 ---
 
 ## Conclusion
+
 This project demonstrates a normalized relational schema, full CRUD support, indexing, API enrichment, and a working visualization dashboard. It meets CS50 SQL’s requirements for a final project and serves as a personal showcase of both technical skill and creative design.
 
 Maya Angelou once wrote: “Any book that helps a child to form a habit of reading, to make reading one of his deep and continuing needs, is good for him.” This project is a step toward building that lifelong habit into code.
