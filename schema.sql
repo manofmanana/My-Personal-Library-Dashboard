@@ -32,3 +32,9 @@ CREATE TABLE ratings (
     rating REAL NOT NULL,
     FOREIGN KEY (book_id) REFERENCES books(id)
 );
+
+-- Indexes for the joins and filters the app runs most
+CREATE INDEX idx_books_author ON books(author_id);
+CREATE INDEX idx_books_genre ON books(genre_id);
+CREATE INDEX idx_books_year ON books(year);
+CREATE INDEX idx_ratings_book ON ratings(book_id);

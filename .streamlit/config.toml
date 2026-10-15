@@ -1,0 +1,22 @@
+[theme]
+base = "light"
+primaryColor = "#9a5b2e"            # leather brown
+backgroundColor = "#f7f1e6"         # parchment
+secondaryBackgroundColor = "#efe4d2"
+textColor = "#2b1d14"
+font = "'Inter', sans-serif"
+headingFont = "'Fraunces', Georgia, serif"
+baseRadius = "0.75rem"
+borderColor = "#e2d4bd"
+showWidgetBorder = true
+linkColor = "#9a5b2e"
+
+[theme.sidebar]
+backgroundColor = "#2a1d14"
+textColor = "#f7f1e6"
+
+[server]
+enableStaticServing = true          # serves ./static at app/static/
+
+[browser]
+gatherUsageStats = false
